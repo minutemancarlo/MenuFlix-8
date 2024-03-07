@@ -1,0 +1,6 @@
+@MenuFlix.Web.Server_HostAddress = http://localhost:5162
+
+GET {{MenuFlix.Web.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

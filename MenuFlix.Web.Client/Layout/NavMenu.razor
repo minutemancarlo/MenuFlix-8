@@ -1,0 +1,17 @@
+﻿
+<MudPaper Width="250px" Class="py-1" Elevation="0">
+    <MudNavMenu Dense>              
+        <MudText Typo="Typo.body2" Class="px-4 pt-3 mud-text-secondary">Administrator</MudText>
+        <MudDivider Class="my-2" />
+        <MudNavLink Href="/">Dashboard</MudNavLink>
+        <MudNavLink Href="/fetchdata">Restaurants</MudNavLink>
+        <MudNavLink Href="/billing" Disabled="true">Billing</MudNavLink>
+        <AuthorizeView Roles="Administrator">
+            <MudNavGroup Title="Settings" Icon="@Icons.Material.Filled.Settings" Expanded="true">
+                <MudNavLink Href="/users" Icon="@Icons.Material.Filled.ManageAccounts">Users</MudNavLink>
+                <MudNavLink Href="/counter">Security</MudNavLink>
+            </MudNavGroup>
+        </AuthorizeView>        
+        <MudNavLink Href="/about">About</MudNavLink>
+    </MudNavMenu>
+</MudPaper>

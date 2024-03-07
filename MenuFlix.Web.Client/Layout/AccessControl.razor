@@ -1,0 +1,64 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@inject NavigationManager Navigation
+
+<AuthorizeView>
+    <Authorized>
+        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
+            @foreach (var claim in context.User.Claims)
+            {
+                if (claim.Type == "picture")
+                {
+                    profilePic = claim.Value;
+                }
+
+                if (claim.Type == "given_name")
+                {
+                    name = claim.Value;
+                }
+            }
+            <MudText Color="Color.Inherit" Class="py-3" Typo="Typo.caption">Hello, @name</MudText>
+            <MudMenu Class="my-3">
+                <ActivatorContent>
+                    @if (profilePic != String.Empty)
+                    {
+                        <MudImage Src="@profilePic" Class="rounded-circle" ObjectFit="ObjectFit.Contain" Width="30" Height="30"></MudImage>
+                    }
+                    else
+                    {
+                        <MudAvatar Color="Color.Tertiary" Size="Size.Medium">
+                            @context.User.Identity.Name?.Trim()?.FirstOrDefault()
+                        </MudAvatar>
+                    }
+                </ActivatorContent>
+                <ChildContent>
+                    <MudMenuItem>Account</MudMenuItem>
+                    <MudMenuItem OnClick="BeginLogout">Log Out</MudMenuItem>
+                </ChildContent>
+            </MudMenu>
+
+        </MudStack>
+    </Authorized>
+    <NotAuthorized>
+        <MudLink Color="Color.Inherit" Typo="Typo.inherit" Href="authentication/login">Log In</MudLink>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    string profilePic = String.Empty;
+    string name = String.Empty;
+    // private async Task BeginSignOut(MouseEventArgs args)
+    // {
+    //     await SignOutManager.SetSignOutState();
+    //     Navigation.NavigateTo("authentication/logout");
+    // }
+    private void BeginLogout(MouseEventArgs args)
+    {
+        Navigation.NavigateToLogout("authentication/logout");
+    }
+
+
+
+
+}
