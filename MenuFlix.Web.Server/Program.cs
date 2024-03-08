@@ -1,4 +1,5 @@
 using Auth0Net.DependencyInjection;
+using MenuFlix.Web.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 
@@ -26,9 +27,11 @@ builder.Services.AddAuth0ManagementClient().AddManagementAccessToken();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
 
@@ -39,6 +42,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.UseWebAssemblyDebugging();
 }
+    
 
 app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
@@ -48,7 +52,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
+    
 app.MapControllers();
 app.MapFallbackToFile("index.html");
+//app.MapFallbackToFile("/_Host");
 
 app.Run();

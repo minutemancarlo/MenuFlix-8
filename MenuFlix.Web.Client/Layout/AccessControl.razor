@@ -3,6 +3,7 @@
 
 @inject NavigationManager Navigation
 
+
 <AuthorizeView>
     <Authorized>
         <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
@@ -41,7 +42,12 @@
         </MudStack>
     </Authorized>
     <NotAuthorized>
-        <MudLink Color="Color.Inherit" Typo="Typo.inherit" Href="authentication/login">Log In</MudLink>
+        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
+            <MudButton Variant="Variant.Filled" Color="Color.Warning" Size="Size.Small">Login</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Warning" Size="Size.Small">SignUp</MudButton>
+            @* <MudLink Color="Color.Inherit" Class="d-inline-block py-5" Typo="Typo.inherit" Href="authentication/login">Log In</MudLink> *@
+        </MudStack>
+        
     </NotAuthorized>
 </AuthorizeView>
 

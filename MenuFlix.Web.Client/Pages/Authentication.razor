@@ -1,4 +1,69 @@
-﻿@page "/authentication/{action}"
+﻿@* @page "/authentication/{action}"
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.Extensions.Configuration
+@using System.Text.Json; // For JsonSerializer
+@using System.Threading.Tasks; // For Task
+@using System.Security.Claims
+@inject NavigationManager Navigation
+@inject IConfiguration Configuration
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IJSRuntime JSRuntime
+<RemoteAuthenticatorView Action="@Action">
+    <LogOut>
+        @{
+            var authority = (string)Configuration["Auth0:Authority"];
+            var clientId = (string)Configuration["Auth0:ClientId"];
+
+            Navigation.NavigateTo($"{authority}/v2/logout?client_id={clientId}");
+        }
+    </LogOut>
+</RemoteAuthenticatorView>
+
+@code {
+    [Parameter] public string Action { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        while (true)
+        {
+            var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+            if (authenticationState.User.Identity.IsAuthenticated)
+            {
+                // User is authenticated, call the Razor page and break the loop
+                 Navigation.NavigateTo("counter");
+                break;
+            }
+
+            await Task.Delay(1000); // Delay for 1 second before checking again
+        }
+    }
+
+    private async Task OnAuthenticationStateChanged(Task<AuthenticationState> task)
+    {
+        var authenticationState = await task;
+
+        if (authenticationState.User.Identity.IsAuthenticated)
+        {
+            // Save authentication state to IndexedDB
+            await PersistAuthenticationStateAsync(authenticationState.User);
+
+            // Call the Razor page after successful authentication
+             Navigation.NavigateTo("your-razor-page-path");
+        }
+    }
+
+    private async Task PersistAuthenticationStateAsync(ClaimsPrincipal user)
+    {
+        var serializedState = JsonSerializer.Serialize(user.Identities.FirstOrDefault(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        await JSRuntime.InvokeVoidAsync("navigator.idb.setItem", "authState", serializedState);
+    }
+
+    // ... other code ...
+}
+ *@
+
+@page "/authentication/{action}"
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Microsoft.Extensions.Configuration
 
@@ -18,4 +83,5 @@
 
 @code {
     [Parameter] public string Action { get; set; }
+
 }

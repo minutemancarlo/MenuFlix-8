@@ -1,7 +1,7 @@
 ﻿<CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(GuestLayout)">
                 <Authorizing>
                     <MudItem xs="12">
                         <MudSkeleton Width="100%" />
@@ -12,7 +12,9 @@
                         <MudSkeleton Animation="Animation.Wave" Width="100%" />
                     </MudItem>
                 </Authorizing>
-                <NotAuthorized>
+                
+                
+                <NotAuthorized >
                     <h1>Sorry</h1>
                     <p>You're not authorized to reach this page. You need to log in.</p>
                 </NotAuthorized>
@@ -21,7 +23,7 @@
         </Found>
         <NotFound>
             <PageTitle>Not found</PageTitle>
-            <LayoutView Layout="@typeof(MainLayout)">
+            <LayoutView Layout="@typeof(GuestLayout)">
                 <p role="alert">Sorry, there's nothing at this address.</p>
             </LayoutView>
         </NotFound>

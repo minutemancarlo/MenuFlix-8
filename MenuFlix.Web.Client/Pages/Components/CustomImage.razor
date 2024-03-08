@@ -1,0 +1,45 @@
+﻿<div style="position: relative; cursor: pointer" @onclick="@this.Clicked">
+
+    @* the image *@
+    <MudImage ObjectFit="ObjectFit.ScaleDown" Width="250" Height="250" Src="@this.Src" Alt="@this.Alt" />
+
+    @* A transparent background for the text *@
+    <MudPaper Elevation="0"
+              Class="rounded-0"
+              Style="position: absolute; bottom: 0; left: 0; padding: 25px; width: 100vw; opacity: 0.6">
+
+        @* Hack: the text is needed to give the transparent part the proper height, but will also display the text in 0.6 transparency *@
+        <MudText Typo="Typo.h6">@this.Name</MudText>
+        <MudText Typo="Typo.subtitle1">@this.ShortName</MudText>
+    </MudPaper>
+
+    @* The text (in black) *@
+    <span style="position: absolute; bottom: 0; left: 0; padding: 25px; width: 100vw; color: black">
+        <MudText Typo="Typo.h6">@this.Name</MudText>
+        <MudText Typo="Typo.subtitle1">@this.ShortName</MudText>
+    </span>
+
+</div>
+
+@code {
+
+    [Parameter]
+    public string Src { get; set; } = default!;
+
+    [Parameter]
+    public string Alt { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Name { get; set; } = default!;
+
+    [Parameter]
+    public string ShortName { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    private async Task Clicked()
+    {
+        await this.OnClick.InvokeAsync();
+    }
+}

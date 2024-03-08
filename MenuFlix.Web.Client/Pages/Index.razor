@@ -1,0 +1,185 @@
+﻿@page "/"
+@layout GuestLayout
+@using MudBlazor
+<PageTitle>Index</PageTitle>
+
+<MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
+    <MudGrid Style="display: none;">
+        
+        <MudItem xs="12">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+            <style type="text/css">
+
+                .bounceIn {
+                    opacity: 0;
+                    animation-delay: 0.5s;
+                    animation-duration: 0.5s;
+                    animation-name: bounceIn;
+                    animation-fill-mode: forwards;
+                }
+
+                .bounceOut {
+                    animation-duration: 0.5s;
+                    animation-name: bounceOut;
+                    animation-fill-mode: forwards;
+                }
+
+                .backInDown {
+                    opacity: 0;
+                    animation-delay: 0.5s;
+                    animation-duration: 0.5s;
+                    animation-name: backInDown;
+                    animation-fill-mode: forwards;
+                }
+
+                .backOutDown {
+                    animation-duration: 0.5s;
+                    animation-name: backOutDown;
+                    animation-fill-mode: forwards;
+                }
+
+                .rotateIn {
+                    opacity: 0;
+                    animation-delay: 0.5s;
+                    animation-duration: 0.5s;
+                    animation-name: rotateIn;
+                    animation-fill-mode: forwards;
+                }
+
+                .rotateOut {
+                    animation-duration: 0.5s;
+                    animation-name: rotateOut;
+                    animation-fill-mode: forwards;
+                }
+            </style>
+
+            <MudCarousel Class="mud-width-full" Style="height:500px;" TData="object" AutoCycle="false">
+                <MudCarouselItem Color="@Color.Primary" Transition="Transition.Slide">
+                    <div style="position: relative; cursor: pointer" >
+
+                        @* the image *@
+                        <MudImage Src="Images/carousel/1.jpg" Alt="sample" />
+
+                        @* A transparent background for the text *@
+                        <MudPaper Elevation="0"
+                                  Class="rounded-0"
+                                  Style="position: absolute; bottom: 0; left: 0; padding: 25px; width: 100vw; opacity: 0.6">
+
+                            @* Hack: the text is needed to give the transparent part the proper height, but will also display the text in 0.6 transparency *@
+                            <MudText Typo="Typo.h4">Sample</MudText>
+                            <MudText Typo="Typo.h6">Sampol</MudText>
+                        </MudPaper>
+
+                        @* The text (in black) *@
+                        <span style="position: absolute; bottom: 0; left: 0; padding: 25px; width: 100vw; color: black">
+                            <MudText Typo="Typo.h4">Sample</MudText>
+                            <MudText Typo="Typo.h6">Sampol</MudText>
+                        </span>
+
+                    </div>
+                    @* <div class="d-flex" style="height:100%">
+                        <MudImage ObjectFit="ObjectFit.Cover" Src="Images/carousel/1.jpg" Alt="carousel 1" Class="rounded-lg">
+                            <MudText Typo="Typo.h1">MenuFlix Food Delivery</MudText>
+                        </MudImage>
+                    </div> *@
+                </MudCarouselItem>
+                <MudCarouselItem Color="@Color.Secondary" Transition="Transition.Fade">
+                    @* <div class="d-flex" style="height:100%"> *@
+                        <MudImage ObjectFit="ObjectFit.ScaleDown" Src="Images/carousel/2.jpg" Alt="carousel 2" Class="rounded-lg" />
+                    @* </div> *@
+                </MudCarouselItem>
+                <MudCarouselItem Color="@Color.Tertiary" Transition="Transition.Custom" CustomTransitionEnter="bounceIn" CustomTransitionExit="bounceOut">
+                    @* <div class="d-flex" style="height:100%"> *@
+                        <MudImage ObjectFit="ObjectFit.Fill" Src="Images/carousel/3.jpg" Alt="carousel 3" Class="rounded-lg" />
+                    @* </div> *@
+                </MudCarouselItem>
+                <MudCarouselItem Transition="Transition.Custom" CustomTransitionEnter="backInDown" CustomTransitionExit="backOutDown">
+                    @* <div class="d-flex" style="background-color:lightgray; height:100%"> *@
+                        <MudImage ObjectFit="ObjectFit.Contain" Src="Images/carousel/4.jpg" Alt="carousel 1" Class="rounded-lg" />
+                    @* </div> *@
+                </MudCarouselItem>
+               @*  <MudCarouselItem Transition="Transition.Custom" CustomTransitionEnter="rotateIn" CustomTransitionExit="rotateOut">
+                    <div class="d-flex" style="background-color:lightgray; height:100%">
+                        <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Color="@Color.Secondary" Size="@Size.Large" />
+                    </div>
+                </MudCarouselItem> *@
+            </MudCarousel>
+        </MudItem>
+    </MudGrid>
+    <MudGrid>
+        <MudItem xs="12" sm="6" md="4">
+
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;">
+        
+        
+                <MudStack Row>
+                @foreach (var item in this.items)
+                {
+
+                    <MudItem md="6">
+                        <CustomImage Src="@item.Src"
+                                     Name="@item.Name"
+                                     ShortName="@item.ShortName"
+                                     OnClick="@(() => this.Click(item))" />
+                    </MudItem>
+                }
+                </MudStack>        
+        
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="12" md="4">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 100%"></MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="12" md="4">
+            <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    <MudScrollToTop>
+        <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.ArrowCircleUp" />
+    </MudScrollToTop>
+</MudContainer>
+
+
+
+@code {
+    
+    public class Item
+    {
+        public string Name { get; set; }
+        public string ShortName { get; set; }
+        public string Src { get; set; }
+    }
+    private readonly List<Item> items = new()
+            {
+            new Item { Name = "Adobo", ShortName = "Adobong Manok", Src = "Images/carousel/1.jpg" },
+            new Item { Name = "Sinigang", ShortName = "Sinigang na Pig", Src = "Images/carousel/2.jpg" }
+            };
+
+    private void Click(Item item)
+    {
+        Console.WriteLine($"Image: {item.Src}");
+    }
+ }
