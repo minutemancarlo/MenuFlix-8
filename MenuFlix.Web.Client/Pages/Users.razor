@@ -1,54 +1,83 @@
 ﻿@page "/users"
+@layout MainLayout
 @using MenuFlix.Web.Shared
+
 @inject HttpClient Http
 @attribute [Authorize(Roles = "Administrator")]
 
-<MudItem xs="12">
-    <MudDataGrid T="UserDto.Index" Items="@users" Loading="_loading" Hover ColumnResizeMode="ResizeMode.Container">
-        <Columns>
+<MudStack AlignItems="AlignItems.Center" Justify="Justify.Center">
+    <MudItem xs="12" md="8" sm="6">
+        <MudDataGrid T="UserDto.Index" Items="@users" Loading="_loading" Hover ColumnResizeMode="ResizeMode.Container" Height="500px;">
+            <Columns>
+                <PropertyColumn Property="x => x.FullName" HeaderClass="blue darken-1 shades-text text-white" />
+                <TemplateColumn Title="Provider" HeaderClass="blue darken-1 shades-text text-white">
+                    <CellTemplate>
+                        @if (context.Item.Provider.Contains("google"))
+                        {
+                            <MudIcon Icon="@Icons.Custom.Brands.Google" Color="Color.Error" />
+                        }
+                        else if (context.Item.Provider.Contains("facebook"))
+                        {
+                            <MudIcon Icon="@Icons.Custom.Brands.Facebook" Color="Color.Primary" />
+                        }
+                        else
+                        {
+                            <MudIcon Icon="@Icons.Material.Filled.Email" Color="Color.Tertiary" />
+                        }
+                    </CellTemplate>
+                </TemplateColumn>
+                <PropertyColumn Property="x => x.Email" HeaderClass="blue darken-1 shades-text text-white" />
+                <TemplateColumn Title="Restaurant Owner Role" HeaderClass="blue darken-1 shades-text text-white">
+                    <CellTemplate>
+                        <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" OverrideStyles="false">
+                            <MudButton Color="Color.Success" Size="Size.Small" StartIcon="@Icons.Material.Filled.ThumbUp" OnClick="@(() => UpdateOwner(context.Item.Auth0Id))" Variant="Variant.Filled">Approve</MudButton>
+                            <MudButton Color="Color.Error" Size="Size.Small" EndIcon="@Icons.Material.Filled.ThumbDown" Variant="Variant.Filled">Reject</MudButton>
+                        </MudButtonGroup>
+                    </CellTemplate>
+                </TemplateColumn>
+                <PropertyColumn Property="x => x.Blocked" HeaderClass="blue darken-1 shades-text text-white" />
+                <PropertyColumn Property="x => x.LastLogin" HeaderClass="blue darken-1 shades-text text-white" />
+            </Columns>
+            <PagerContent>
+                <MudDataGridPager T="UserDto.Index" />
+            </PagerContent>
+        </MudDataGrid>
+    </MudItem>
+</MudStack>
 
-            <PropertyColumn Property="x => x.FullName" HeaderClass="blue darken-1 shades-text text-white" />
-            <TemplateColumn Title="Provider" HeaderClass="blue darken-1 shades-text text-white">
-                <CellTemplate>
-                    @if (context.Item.Provider.Contains("google"))
-                    {
-                        <MudIcon Icon="@Icons.Custom.Brands.Google" Color="Color.Error" />
-                    }
-                    else if (context.Item.Provider.Contains("facebook"))
-                    {
-                        <MudIcon Icon="@Icons.Custom.Brands.Facebook" Color="Color.Primary" />
-                    }
-                    else
-                    {
-                        <MudIcon Icon="@Icons.Material.Filled.Email" Color="Color.Tertiary" />
-                    }
-                </CellTemplate>
-            </TemplateColumn>
-            <PropertyColumn Property="x => x.Email" HeaderClass="blue darken-1 shades-text text-white" />
-            <TemplateColumn Title="Restaurant Owner Role" HeaderClass="blue darken-1 shades-text text-white">
-                <CellTemplate>
-                    <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" OverrideStyles="false">
-                        <MudButton Color="Color.Success" Size="Size.Small" StartIcon="@Icons.Material.Filled.ThumbUp" Variant="Variant.Filled">Approve</MudButton>
-                        <MudButton Color="Color.Error" Size="Size.Small" EndIcon="@Icons.Material.Filled.ThumbDown" Variant="Variant.Filled">Reject</MudButton>
-                    </MudButtonGroup>
-                </CellTemplate>
-            </TemplateColumn>
-            <PropertyColumn Property="x => x.Blocked" HeaderClass="blue darken-1 shades-text text-white" />
-            <PropertyColumn Property="x => x.LastLogin" HeaderClass="blue darken-1 shades-text text-white" />
-        </Columns>
-        <PagerContent>
-            <MudDataGridPager T="UserDto.Index" />
-        </PagerContent>
-    </MudDataGrid>
-</MudItem>
 @code {
     private IEnumerable<UserDto.Index>? users;
     private bool _loading = true;
+    [CascadingParameter] public Owner owner { get; set; }
+    private string[] assignedOwner = new string[] { String.Empty };
+
     protected override async Task OnInitializedAsync()
     {
+        users = new List<UserDto.Index>();
         users = await Http.GetFromJsonAsync<UserDto.Index[]>("user");
         _loading = false;
         await base.OnInitializedAsync();
-        
+
+    }       
+
+    private async Task UpdateOwner(string _assignedOwner)
+    {
+        try
+        {
+            assignedOwner[0] = _assignedOwner;
+            var response = await Http.PostAsJsonAsync<string[]>("managerapplication", assignedOwner);
+
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadAsStringAsync();
+
+            // Handle the response from the server
+            Console.WriteLine(result);
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions
+            Console.WriteLine($"Error updating owner: {ex.Message}");
+        }
     }
 }

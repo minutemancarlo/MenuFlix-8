@@ -10,6 +10,7 @@ namespace MenuFlix.Web.Shared
     {
         public class Index
         {
+            public string Auth0Id { get; set; }
             public string Email { get; set; }
             public string FullName { get; set; }
             public string Provider { get; set; }

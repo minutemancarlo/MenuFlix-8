@@ -71,6 +71,12 @@
 @inject IConfiguration Configuration
 
 <RemoteAuthenticatorView Action="@Action">
+    <LoggingIn>
+        <Index />
+    </LoggingIn>    
+   <CompletingLoggingIn>
+        <Index />
+   </CompletingLoggingIn>
     <LogOut>
         @{
             var authority = (string)Configuration["Auth0:Authority"];
@@ -79,6 +85,9 @@
             Navigation.NavigateTo($"{authority}/v2/logout?client_id={clientId}");
         }
     </LogOut>
+    <LogInFailed>
+        <span>Login failed. Reason: @context</span>
+    </LogInFailed>
 </RemoteAuthenticatorView>
 
 @code {

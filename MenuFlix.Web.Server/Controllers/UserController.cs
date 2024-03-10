@@ -23,6 +23,7 @@ namespace MenuFlix.Web.Server.Controllers
         [HttpGet]
         public async Task<IEnumerable<UserDto.Index>> GetUsers()
         {
+            
             var users = await _managementApiClient.Users.GetAllAsync(new GetUsersRequest(), new PaginationInfo());
             return users.Select(x => new UserDto.Index
             {
@@ -31,7 +32,8 @@ namespace MenuFlix.Web.Server.Controllers
                 Blocked = x.Blocked ?? false,
                 UserId = x.UserId.Split('|')[1],
                 Provider = x.UserId.Split('|')[0],
-                LastLogin = x.LastLogin
+                LastLogin = x.LastLogin,
+                Auth0Id = x.UserId
             });
         }
     }

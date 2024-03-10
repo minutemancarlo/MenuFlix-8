@@ -1,70 +1,121 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-
+@using MudBlazor.Extensions.Core
+@using MudBlazor.Extensions.Options
+@using MenuFlix.Web.Client.Pages.Components
+@using MudBlazor.Extensions.Helper
+@using MudBlazor.Utilities
+@using Nextended.Core.Extensions
+@using System.Security.Claims
 @inject NavigationManager Navigation
-
-
+@inject IDialogService DialogService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 <AuthorizeView>
-    <Authorized>
-        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
-            @foreach (var claim in context.User.Claims)
-            {
-                if (claim.Type == "picture")
-                {
-                    profilePic = claim.Value;
-                }
-
-                if (claim.Type == "given_name")
-                {
-                    name = claim.Value;
-                }
-            }
-            <MudText Color="Color.Inherit" Class="py-3" Typo="Typo.caption">Hello, @name</MudText>
-            <MudMenu Class="my-3">
-                <ActivatorContent>
-                    @if (profilePic != String.Empty)
-                    {
-                        <MudImage Src="@profilePic" Class="rounded-circle" ObjectFit="ObjectFit.Contain" Width="30" Height="30"></MudImage>
-                    }
-                    else
-                    {
-                        <MudAvatar Color="Color.Tertiary" Size="Size.Medium">
-                            @context.User.Identity.Name?.Trim()?.FirstOrDefault()
-                        </MudAvatar>
-                    }
-                </ActivatorContent>
-                <ChildContent>
-                    <MudMenuItem>Account</MudMenuItem>
-                    <MudMenuItem OnClick="BeginLogout">Log Out</MudMenuItem>
-                </ChildContent>
-            </MudMenu>
-
-        </MudStack>
-    </Authorized>
     <NotAuthorized>
         <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
-            <MudButton Variant="Variant.Filled" Color="Color.Warning" Size="Size.Small">Login</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Warning" Size="Size.Small">SignUp</MudButton>
-            @* <MudLink Color="Color.Inherit" Class="d-inline-block py-5" Typo="Typo.inherit" Href="authentication/login">Log In</MudLink> *@
+            @* <MudButton Variant="Variant.Filled" Color="@(IsCustomer ? Color.Warning : Color.Dark)" OnClick="@(() => AuthAction("login"))" Size="Size.Small">Login</MudButton> *@
+            <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="@(() => AuthAction("login"))" Size="Size.Small">Login</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="@(() => AuthAction("register"))" Size="Size.Small">SignUp</MudButton>
+            
+                <MudBadge Content="3" Overlap Color="Color.Warning">
+                   <MudIconButton Icon="@Icons.Material.Filled.ShoppingCart" ButtonType="ButtonType.Button" Size="Size.Medium" Color="Color.Error" />
+                </MudBadge>
+                     
         </MudStack>
-        
     </NotAuthorized>
+    <Authorizing>
+        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
+            <MudSkeleton Width="30px" Height="42px;" />
+            <MudSkeleton Width="30px" Height="42px;" />
+        </MudStack>
+    </Authorizing>
+ 
+    <Authorized>
+        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
+            <MudText Style="color: white" Class="py-3" Typo="Typo.h6">Hello, @name!</MudText>          
+            <MudBadge Content="3" Overlap Color="Color.Warning">
+                <MudIconButton Icon="@Icons.Material.Filled.ShoppingCart" ButtonType="ButtonType.Button" Size="Size.Medium" Style="color: white" />
+            </MudBadge>
+            <MudMenu Class="my-3">
+                <ActivatorContent>                                                              
+                    <MudImage Src="@profilePic" Elevation="4" Class="rounded-circle" ObjectFit="ObjectFit.Contain" Width="40" Height="40"></MudImage>                                        
+                </ActivatorContent>
+                <ChildContent>
+                    <MudMenuItem IconSize="Size.Small" Icon="@Icons.Material.Filled.Person">Account</MudMenuItem>
+                    <MudMenuItem IconSize="Size.Small" OnClick="BeginLogout" Icon="@Icons.Material.Filled.Logout">Log Out</MudMenuItem>
+                </ChildContent>
+            </MudMenu>
+        </MudStack>
+    </Authorized>        
 </AuthorizeView>
 
 @code {
     string profilePic = String.Empty;
     string name = String.Empty;
-    // private async Task BeginSignOut(MouseEventArgs args)
-    // {
-    //     await SignOutManager.SetSignOutState();
-    //     Navigation.NavigateTo("authentication/logout");
-    // }
+    protected List<Claim> UserClaims { get; set; } = new List<Claim>();
+    private bool IsCustomer { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        IsCustomer = user.IsInRole("Customer");
+        // Check if the user is authenticated
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            UserClaims = user.Claims.ToList();
+
+            foreach(var item in UserClaims)
+            {
+                Console.WriteLine($"{item.Type}: {item.Value}");
+                if (item.Type == "picture")
+                {
+                    profilePic = item.Value;
+                }
+                if (item.Type == "nickname")
+                {
+                    name = item.Value;
+                }
+            }
+
+            if (!IsCustomer)
+            {
+                Navigation.NavigateTo("/home");
+            }
+        }
+        else
+        {
+            // Handle the case where the user is not authenticated
+        }
+    }
+    
     private void BeginLogout(MouseEventArgs args)
     {
         Navigation.NavigateToLogout("authentication/logout");
     }
 
+    private void AuthAction(string action)
+    {        
+            Navigation.NavigateToLogout($"authentication/{action}");        
+    }
+          
 
+    // private async Task Prompt()
+    // {
+    //     var options = new DialogOptionsEx
+    //         {
+    //             CloseButton = true,
+    //             Position = DialogPosition.Center,
+    //             Animation = AnimationType.SlideIn,
+    //             AnimationDuration = TimeSpan.FromMilliseconds(500),
+    //             FullWidth = true,                
+    //             MaxWidth = MaxWidth.Medium,
+    //             MaxHeight = MaxHeight.Medium
+    //         };
+       
+    //     var parameters = new DialogParameters<LoginDialog> { { x => x.server, "Hello" } };
+    //     var dialog = await DialogService.ShowEx<LoginDialog>("Your Dialog Title", parameters, options);               
+    // }
 
 
 }

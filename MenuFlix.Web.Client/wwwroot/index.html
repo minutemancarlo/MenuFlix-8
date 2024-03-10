@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MenuFlix.Web.Client</title>
+    <title>MenuFlix</title>
     <base href="/" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
@@ -15,10 +15,15 @@
     <link href="manifest.webmanifest" rel="manifest" />
     <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
     <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
+    <link id="mudex-styles" href="_content/MudBlazor.Extensions/mudBlazorExtensions.min.css" rel="stylesheet">
+    <link href="_content/CodeBeam.MudBlazor.Extensions/MudExtensions.min.css" rel="stylesheet" />
 </head>
 
 <body>
-    <div id="app" style="display: flex; justify-content: center; align-items: center; width: 100vw; height: 100vh; overflow-x: hidden;">
+    <div id="app"></div>
+    <mud-ex-app-loader AppName="MenuFlix" MainAppId="app" Logo="/icon-192.png" />
+
+    <!--<div id="app" style="display: flex; justify-content: center; align-items: center; width: 100vw; height: 100vh; overflow-x: hidden;">
         <div style="width: 350px; height: 200px; text-align: center;">
             <div>
                 <img src="/icon-192.png" alt="logo" style="height: 5rem;" />
@@ -30,7 +35,7 @@
                 Loading MenuFlix...
             </div>
         </div>
-    </div>
+    </div>-->
 
     <div id="blazor-error-ui">
         An unhandled error has occurred.
@@ -39,9 +44,11 @@
     </div>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
     <script src="_framework/blazor.webassembly.js"></script>
-
+    <script src="bg.js"></script>
     <script>navigator.serviceWorker.register('service-worker.js');</script>
     <script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js"></script>
+    <script src="_content/MudBlazor.Extensions/js/components/MudExAppLoader.min.js"></script>
+    <script src="_content/CodeBeam.MudBlazor.Extensions/MudExtensions.min.js"></script>
 </body>
 
 </html>
