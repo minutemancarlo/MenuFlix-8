@@ -1,13 +1,15 @@
-﻿
-<MudPaper Width="250px" Class="py-1" Elevation="0" Height="100%">
-    <MudNavMenu Dense>              
-        <MudText Typo="Typo.body2" Class="px-4 pt-3 mud-text-secondary">Administrator</MudText>
-        <MudDivider Class="my-2" />
-        
+﻿@inject IJSRuntime _jsRuntime;
+@implements IAsyncDisposable
+
+<MudPaper Width="250px" Style="height: 100%;overflow: hidden" Elevation="0">
+    <MudNavMenu Style="height: 95%;overflow: hidden">              
+        <MudText Typo="Typo.body2" Class="pl-2 pt-3 mud-text-secondary">Administrator</MudText>
+        <MudDivider Class="my-2" />        
         <AuthorizeView Roles="Administrator">
-            <MudNavLink Href="/">Dashboard</MudNavLink>            
-            <MudNavLink Href="/users">Store Management</MudNavLink>
-            <MudNavLink Href="/weather">Weather</MudNavLink>
+            <MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/">Dashboard</MudNavLink>
+            <MudNavLink Icon="@Icons.Material.Filled.Group" Href="/users">User Management</MudNavLink>
+            <MudNavLink Icon="@Icons.Material.Filled.Storefront" Href="/users">Store Management</MudNavLink>
+            @* <MudNavLink Href="/weather">Weather</MudNavLink> *@
             @* <MudNavGroup Title="Settings" Icon="@Icons.Material.Filled.Settings" Expanded="true">
                 <MudNavLink Href="/users" Icon="@Icons.Material.Filled.ManageAccounts">Store Management</MudNavLink>
                 
@@ -15,10 +17,10 @@
         </AuthorizeView>        
 
         <AuthorizeView Roles="Manager">
-            <MudNavLink Href="/">Dashboard</MudNavLink>
-            <MudNavLink Href="/fetchdata">Menu</MudNavLink>
-            <MudNavLink Href="/billing">Orders</MudNavLink>
-            <MudNavLink Href="/billing">My Store</MudNavLink>
+            <MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/">Dashboard</MudNavLink>
+            <MudNavLink Icon="@Icons.Material.Filled.RestaurantMenu" Href="/fetchdata">Menu</MudNavLink>
+            <MudNavLink Icon="@Icons.Material.Filled.ReceiptLong" Href="/billing">Orders</MudNavLink>
+            <MudNavLink Icon="@Icons.Material.Filled.Store" Href="/billing">My Store</MudNavLink>
             @* <MudNavGroup Title="Settings" Icon="@Icons.Material.Filled.Settings" Expanded="true">
                 <MudNavLink Href="/users" Icon="@Icons.Material.Filled.ManageAccounts">Users</MudNavLink>
                 <MudNavLink Href="/counter">Security</MudNavLink>
@@ -53,8 +55,52 @@
             <MudNavLink Href="/users" Icon="@Icons.Material.Filled.ManageAccounts">Users</MudNavLink>
             <MudNavLink Href="/counter">Security</MudNavLink>
             </MudNavGroup> *@
-        </AuthorizeView>
-
-        <MudNavLink Href="/about">About</MudNavLink>
+        </AuthorizeView>       
     </MudNavMenu>
+    @if (IsOnline)
+    {
+        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+            <MudChip Class="fixed-bottom" Size="Size.Small" Icon="@Icons.Material.Filled.CloudDone" Color="Color.Success">Online</MudChip>
+        </MudStack>
+    }
+    else
+    {
+        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+            <MudChip Class="fixed-bottom" Size="Size.Small" Icon="@Icons.Material.Filled.CloudOff" Color="Color.Error">Offline</MudChip>
+        </MudStack>
+    }
+       
 </MudPaper>
+
+@code{
+    [Parameter]
+    public RenderFragment Online { get; set; }
+
+    [Parameter]
+    public RenderFragment Offline { get; set; }
+
+    public bool IsOnline { get; set; }
+
+    [JSInvokable("Connection.StatusChanged")]
+    public void OnConnectionStatusChanged(bool isOnline)
+    {
+        if (IsOnline != isOnline)
+        {
+            IsOnline = isOnline;
+        }
+
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        await _jsRuntime.InvokeVoidAsync("Connection.Initialize", DotNetObjectReference.Create(this));
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _jsRuntime.InvokeVoidAsync("Connection.Dispose");
+    }
+}

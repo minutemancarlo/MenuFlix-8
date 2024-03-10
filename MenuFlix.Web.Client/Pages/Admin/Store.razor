@@ -4,12 +4,12 @@
 
 @inject HttpClient Http
 @attribute [Authorize(Roles = "Administrator")]
-
-<MudStack AlignItems="AlignItems.Center" Justify="Justify.Center">
+<PageTitle>Store Management</PageTitle>
+<MudStack AlignItems="AlignItems.Center" Justify="Justify.Center" Class="d-flex flex-grow-1">
     <MudItem xs="12" md="8" sm="6">
-        <MudDataGrid T="UserDto.Index" Items="@users" Loading="_loading" Hover ColumnResizeMode="ResizeMode.Container" Height="500px;">
+        <MudDataGrid T="UserDto.Index" Items="@users" Loading="_loading" Hover ColumnResizeMode="ResizeMode.Column"  Filterable Height="500px;">
             <Columns>
-                <PropertyColumn Property="x => x.FullName" HeaderClass="blue darken-1 shades-text text-white" />
+                <PropertyColumn Property="x => x.FullName" HeaderClass="blue darken-1 shades-text text-white" Title="Name" />
                 <TemplateColumn Title="Provider" HeaderClass="blue darken-1 shades-text text-white">
                     <CellTemplate>
                         @if (context.Item.Provider.Contains("google"))

@@ -17,7 +17,7 @@
             <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="@(() => AuthAction("login"))" Size="Size.Small">Login</MudButton>
             <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="@(() => AuthAction("register"))" Size="Size.Small">SignUp</MudButton>
             
-                <MudBadge Content="3" Overlap Color="Color.Warning">
+                <MudBadge Content="3" Overlap Color="Color.Warning" Bordered>
                    <MudIconButton Icon="@Icons.Material.Filled.ShoppingCart" ButtonType="ButtonType.Button" Size="Size.Medium" Color="Color.Error" />
                 </MudBadge>
                      
@@ -33,10 +33,10 @@
     <Authorized>
         <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
             <MudText Style="color: white" Class="py-3" Typo="Typo.h6">Hello, @name!</MudText>          
-            <MudBadge Content="3" Overlap Color="Color.Warning">
-                <MudIconButton Icon="@Icons.Material.Filled.ShoppingCart" ButtonType="ButtonType.Button" Size="Size.Medium" Style="color: white" />
+            <MudBadge Content="3" Overlap Color="Color.Warning" Bordered>
+                <MudIconButton Icon="@Icons.Material.Filled.ShoppingCart"  ButtonType="ButtonType.Button" Size="Size.Medium" Style="color: white" />
             </MudBadge>
-            <MudMenu Class="my-3">
+            <MudMenu Class="my-3" Dense>
                 <ActivatorContent>                                                              
                     <MudImage Src="@profilePic" Elevation="4" Class="rounded-circle" ObjectFit="ObjectFit.Contain" Width="40" Height="40"></MudImage>                                        
                 </ActivatorContent>
