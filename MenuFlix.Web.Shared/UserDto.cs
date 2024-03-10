@@ -15,8 +15,8 @@ namespace MenuFlix.Web.Shared
             public string FullName { get; set; }
             public string Provider { get; set; }
             public string UserId { get; set; }
-            public bool Blocked { get; set; }
-            public DateTime? LastLogin { get; set; }
+            public string Position { get; set; }      
+            public DateTime? UpdatedOn { get; set; }  
         }
 
 

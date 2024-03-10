@@ -11,24 +11,26 @@ namespace MenuFlix.Web.Server.Controllers
     [Route("[controller]")]
     [Authorize(Roles = "Administrator")]
 
-    public class ManagerApplicationController: ControllerBase
+    public class ApplicationsController: ControllerBase
     {
         private readonly IManagementApiClient _managementApiClient;
 
-        public ManagerApplicationController(IManagementApiClient managementApiClient)
+        public ApplicationsController(IManagementApiClient managementApiClient)
         {
             _managementApiClient = managementApiClient;
         }
 
 
-        [HttpPost]
+        [HttpPost("updateowner")]
         public async Task<ActionResult> UpdateOwner(string[] owner)
         {
             try
             {
-                AssignUsersRequest assignUsersRequest = new AssignUsersRequest();   
+                
+
+                AssignUsersRequest assignUsersRequest = new AssignUsersRequest();
                 assignUsersRequest.Users = owner;
-                await _managementApiClient.Roles.AssignUsersAsync("rol_2sspXXoOPDR0bMiF", assignUsersRequest);
+                await _managementApiClient.Roles.AssignUsersAsync("rol_O1X7YVFrmhnrATqS", assignUsersRequest);
                 return Ok("Owner updated successfully.");
         }
             catch (Exception ex)

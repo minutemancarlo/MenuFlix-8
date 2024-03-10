@@ -1,0 +1,35 @@
+﻿@page "/menu"
+@layout MainLayout
+@inject ISessionStorageService sessionStorage
+<PageTitle>Store Menu</PageTitle>
+
+<MudItem xs="12" Class="float-end">
+    <MudBreadcrumbs Items="_items" Class="pointer-events-none"></MudBreadcrumbs>
+</MudItem>
+
+<MudItem xs="12">
+    <MudStack Row>
+        <MudDataGrid T="string">
+
+        </MudDataGrid>
+        <MudPaper Elevation="4">
+            <MudStack Row>
+                <MudCard>
+                    <MudCardContent>
+                        <MudImage Src=""></MudImage>
+                    </MudCardContent>
+                </MudCard>                
+            </MudStack>
+        </MudPaper>
+    </MudStack>
+</MudItem>
+
+
+@code {
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Store Manager", href: "#", icon: Icons.Material.Filled.AccountCircle),
+        new BreadcrumbItem("Store Menu", href: "#", icon: Icons.Material.Filled.RestaurantMenu)
+    };
+
+}

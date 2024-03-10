@@ -5,6 +5,17 @@ using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var environment = builder.Environment;
+if (!string.IsNullOrWhiteSpace(environment.EnvironmentName))
+{
+    builder.Configuration.SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+        .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", false, true);
+}
+else
+{
+    builder.Configuration.SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+       .AddJsonFile($"appsettings.json", false, true);
+}
 // Add services to the container.
 builder.Services.AddAuthentication(options =>
 {

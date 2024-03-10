@@ -10,6 +10,7 @@
 @inject NavigationManager Navigation
 @inject IDialogService DialogService
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ISessionStorageService sessionStorage
 <AuthorizeView>
     <NotAuthorized>
         <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
@@ -31,18 +32,19 @@
     </Authorizing>
  
     <Authorized>
-        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
-            <MudText Style="color: white" Class="py-3" Typo="Typo.h6">Hello, @name!</MudText>          
+        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">            
+            @if(IsCustomer){
             <MudBadge Content="3" Overlap Color="Color.Warning" Bordered>
                 <MudIconButton Icon="@Icons.Material.Filled.ShoppingCart"  ButtonType="ButtonType.Button" Size="Size.Medium" Style="color: white" />
             </MudBadge>
-            <MudMenu Class="my-3" Dense>
+            }            
+            <MudMenu Class="my-3" Dense ActivationEvent="@MouseEvent.MouseOver" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.CenterLeft">
                 <ActivatorContent>                                                              
                     <MudImage Src="@profilePic" Elevation="4" Class="rounded-circle" ObjectFit="ObjectFit.Contain" Width="40" Height="40"></MudImage>                                        
                 </ActivatorContent>
                 <ChildContent>
                     <MudMenuItem IconSize="Size.Small" Icon="@Icons.Material.Filled.Person">Account</MudMenuItem>
-                    <MudMenuItem IconSize="Size.Small" OnClick="BeginLogout" Icon="@Icons.Material.Filled.Logout">Log Out</MudMenuItem>
+                    <MudMenuItem IconSize="Size.Small" OnClick="@(() => AuthAction("logout"))" Icon="@Icons.Material.Filled.Logout">Log Out</MudMenuItem>
                 </ChildContent>
             </MudMenu>
         </MudStack>
@@ -54,13 +56,16 @@
     string name = String.Empty;
     protected List<Claim> UserClaims { get; set; } = new List<Claim>();
     private bool IsCustomer { get; set; }
-
+    
+    private bool isFirstRender = true;
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         IsCustomer = user.IsInRole("Customer");
-        // Check if the user is authenticated
+        
+
+
         if (user.Identity != null && user.Identity.IsAuthenticated)
         {
             UserClaims = user.Claims.ToList();
@@ -76,8 +81,13 @@
                 {
                     name = item.Value;
                 }
-            }
+                if (item.Type == "sid")
+                {
+                    await sessionStorage.SetItemAsync("_sid", item.Value);
+                }
 
+            }
+            
             if (!IsCustomer)
             {
                 Navigation.NavigateTo("/home");
@@ -86,6 +96,15 @@
         else
         {
             // Handle the case where the user is not authenticated
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && isFirstRender)
+        {
+            isFirstRender = false;
+            
         }
     }
     
@@ -98,6 +117,8 @@
     {        
             Navigation.NavigateToLogout($"authentication/{action}");        
     }
+
+    
           
 
     // private async Task Prompt()

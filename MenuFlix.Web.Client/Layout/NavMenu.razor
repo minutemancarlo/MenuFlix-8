@@ -2,25 +2,31 @@
 @implements IAsyncDisposable
 
 <MudPaper Width="250px" Style="height: 100%;overflow: hidden" Elevation="0">
-    <MudNavMenu Style="height: 95%;overflow: hidden">              
-        <MudText Typo="Typo.body2" Class="pl-2 pt-3 mud-text-secondary">Administrator</MudText>
+    @if (IsOnline)
+    {
+        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+            <MudChip Class="fixed-bottom" Size="Size.Small" Icon="@Icons.Material.Filled.CloudDone" Color="Color.Success"></MudChip>
+        </MudStack>
+    }
+    else
+    {
+        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+            <MudChip Class="fixed-bottom" Size="Size.Small" Icon="@Icons.Material.Filled.CloudOff" Color="Color.Error"></MudChip>
+        </MudStack>
+    }
+    <MudNavMenu Style="height: 95%;overflow: hidden" Bordered>                      
         <MudDivider Class="my-2" />        
         <AuthorizeView Roles="Administrator">
-            <MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/">Dashboard</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard" Href="/">Dashboard</MudNavLink>
             <MudNavLink Icon="@Icons.Material.Filled.Group" Href="/users">User Management</MudNavLink>
-            <MudNavLink Icon="@Icons.Material.Filled.Storefront" Href="/users">Store Management</MudNavLink>
-            @* <MudNavLink Href="/weather">Weather</MudNavLink> *@
-            @* <MudNavGroup Title="Settings" Icon="@Icons.Material.Filled.Settings" Expanded="true">
-                <MudNavLink Href="/users" Icon="@Icons.Material.Filled.ManageAccounts">Store Management</MudNavLink>
-                
-            </MudNavGroup> *@
+            <MudNavLink Icon="@Icons.Material.Filled.Storefront" Href="/store">Store Management</MudNavLink>           
         </AuthorizeView>        
 
         <AuthorizeView Roles="Manager">
-            <MudNavLink Icon="@Icons.Material.Filled.Dashboard" Href="/">Dashboard</MudNavLink>
-            <MudNavLink Icon="@Icons.Material.Filled.RestaurantMenu" Href="/fetchdata">Menu</MudNavLink>
-            <MudNavLink Icon="@Icons.Material.Filled.ReceiptLong" Href="/billing">Orders</MudNavLink>
-            <MudNavLink Icon="@Icons.Material.Filled.Store" Href="/billing">My Store</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard" Href="/">Dashboard</MudNavLink>
+            <MudNavLink Icon="@Icons.Material.Filled.RestaurantMenu" Href="/menu">Menu</MudNavLink>
+            <MudNavLink Icon="@Icons.Material.Filled.ReceiptLong" Href="/orders">Orders</MudNavLink>
+            <MudNavLink Icon="@Icons.Material.Filled.Store" Href="/my-store">My Store</MudNavLink>
             @* <MudNavGroup Title="Settings" Icon="@Icons.Material.Filled.Settings" Expanded="true">
                 <MudNavLink Href="/users" Icon="@Icons.Material.Filled.ManageAccounts">Users</MudNavLink>
                 <MudNavLink Href="/counter">Security</MudNavLink>
@@ -57,25 +63,14 @@
             </MudNavGroup> *@
         </AuthorizeView>       
     </MudNavMenu>
-    @if (IsOnline)
-    {
-        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
-            <MudChip Class="fixed-bottom" Size="Size.Small" Icon="@Icons.Material.Filled.CloudDone" Color="Color.Success">Online</MudChip>
-        </MudStack>
-    }
-    else
-    {
-        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
-            <MudChip Class="fixed-bottom" Size="Size.Small" Icon="@Icons.Material.Filled.CloudOff" Color="Color.Error">Offline</MudChip>
-        </MudStack>
-    }
+   
        
 </MudPaper>
 
 @code{
     [Parameter]
     public RenderFragment Online { get; set; }
-
+    
     [Parameter]
     public RenderFragment Offline { get; set; }
 

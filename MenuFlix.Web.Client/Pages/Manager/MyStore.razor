@@ -1,7 +1,7 @@
-﻿@page "/users"
+﻿@page "/my-store"
 @layout MainLayout
 @inject ISessionStorageService sessionStorage
-<PageTitle>User Management</PageTitle>
+<PageTitle>My Store</PageTitle>
 
 <MudItem xs="12" Class="float-end">
     <MudBreadcrumbs Items="_items" Class="pointer-events-none"></MudBreadcrumbs>
@@ -9,8 +9,8 @@
 @code {
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
     {
-        new BreadcrumbItem("Adminstrator", href: "#", icon: Icons.Material.Filled.AccountCircle),
-        new BreadcrumbItem("User Management", href: "#", icon: Icons.Material.Filled.Group)
+        new BreadcrumbItem("Store Manager", href: "#", icon: Icons.Material.Filled.AccountCircle),
+        new BreadcrumbItem("My Store", href: "#", icon: Icons.Material.Filled.Store)
     };
-  
+
 }

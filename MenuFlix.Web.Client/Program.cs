@@ -7,6 +7,7 @@ using MudBlazor;
 using MenuFlix.Web.Client.Layout;
 using MudBlazor.Extensions;
 using MudExtensions.Services;
+using Blazored.SessionStorage;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
@@ -16,6 +17,7 @@ builder.Services.AddHttpClient("API", client => client.BaseAddress = new Uri(bui
 
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
        .CreateClient("API"));
+builder.Services.AddBlazoredSessionStorage();
 
 builder.Services.AddOidcAuthentication(options =>
 {
