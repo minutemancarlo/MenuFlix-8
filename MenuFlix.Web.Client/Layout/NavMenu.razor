@@ -31,18 +31,7 @@
                 <MudNavLink Href="/users" Icon="@Icons.Material.Filled.ManageAccounts">Users</MudNavLink>
                 <MudNavLink Href="/counter">Security</MudNavLink>
             </MudNavGroup> *@
-        </AuthorizeView>
-
-        <AuthorizeView Roles="Customer">
-            <MudNavLink Href="/">Home</MudNavLink>
-            <MudNavLink Href="/fetchdata">Menu</MudNavLink>            
-            <MudNavLink Href="/billing">My Orders</MudNavLink>
-            @* <MudNavGroup Title="Settings" Icon="@Icons.Material.Filled.Settings" Expanded="true">
-            <MudNavLink Href="/users" Icon="@Icons.Material.Filled.ManageAccounts">Users</MudNavLink>
-            <MudNavLink Href="/counter">Security</MudNavLink>
-            </MudNavGroup> *@
-        </AuthorizeView>
-
+        </AuthorizeView>       
         <AuthorizeView Roles="Accounting">
             <MudNavLink Href="/">Point of Sale</MudNavLink>
             <MudNavLink Href="/fetchdata">Orders</MudNavLink>

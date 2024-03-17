@@ -11,6 +11,7 @@
 @inject IDialogService DialogService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ISessionStorageService sessionStorage
+
 <AuthorizeView>
     <NotAuthorized>
         <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
@@ -34,17 +35,22 @@
     <Authorized>
         <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">            
             @if(IsCustomer){
+                <MudButton Variant="Variant.Outlined" IconSize="Size.Medium" StartIcon="@Icons.Material.Filled.Home" Color="Color.Error">Home</MudButton>
+                <MudButton Variant="Variant.Outlined" IconSize="Size.Medium" StartIcon="@Icons.Material.Filled.RestaurantMenu" Color="Color.Error">Menu</MudButton>
+                <MudButton Variant="Variant.Outlined" IconSize="Size.Medium" StartIcon="@Icons.Material.Filled.Info" Color="Color.Error">About</MudButton>
+                <MudButton Variant="Variant.Outlined" IconSize="Size.Medium" StartIcon="@Icons.Material.Filled.Phone" Color="Color.Error">Contact</MudButton>
+                <MudSpacer/>
             <MudBadge Content="3" Overlap Color="Color.Warning" Bordered>
-                <MudIconButton Icon="@Icons.Material.Filled.ShoppingCart"  ButtonType="ButtonType.Button" Size="Size.Medium" Style="color: white" />
+                    <MudFab Color="Color.Error" StartIcon="@Icons.Material.Filled.ShoppingCart" Size="Size.Small" />                
             </MudBadge>
             }            
-            <MudMenu Class="my-3" Dense ActivationEvent="@MouseEvent.MouseOver" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.CenterLeft">
+            <MudMenu Class="my-3" Dense AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.CenterLeft">
                 <ActivatorContent>                                                              
                     <MudImage Src="@profilePic" Elevation="4" Class="rounded-circle" ObjectFit="ObjectFit.Contain" Width="40" Height="40"></MudImage>                                        
                 </ActivatorContent>
                 <ChildContent>
-                    <MudMenuItem IconSize="Size.Small" Icon="@Icons.Material.Filled.Person">Account</MudMenuItem>
-                    <MudMenuItem IconSize="Size.Small" OnClick="@(() => AuthAction("logout"))" Icon="@Icons.Material.Filled.Logout">Log Out</MudMenuItem>
+                    <MudMenuItem IconSize="Size.Medium" Icon="@Icons.Material.Filled.Person">Account</MudMenuItem>
+                    <MudMenuItem IconSize="Size.Medium" OnClick="@(() => AuthAction("logout"))" Icon="@Icons.Material.Filled.Logout">Log Out</MudMenuItem>
                 </ChildContent>
             </MudMenu>
         </MudStack>
@@ -54,7 +60,7 @@
 @code {
     string profilePic = String.Empty;
     string name = String.Empty;
-    protected List<Claim> UserClaims { get; set; } = new List<Claim>();
+    public List<Claim> UserClaims { get; set; } = new List<Claim>();
     private bool IsCustomer { get; set; }
     
     private bool isFirstRender = true;
@@ -64,8 +70,6 @@
         var user = authState.User;
         IsCustomer = user.IsInRole("Customer");
         
-
-
         if (user.Identity != null && user.Identity.IsAuthenticated)
         {
             UserClaims = user.Claims.ToList();
@@ -83,9 +87,9 @@
                 }
                 if (item.Type == "sid")
                 {
-                    await sessionStorage.SetItemAsync("_sid", item.Value);
+                    await sessionStorage.SetItemAsync(item.Type, item.Value);
                 }
-
+                
             }
             
             if (!IsCustomer)

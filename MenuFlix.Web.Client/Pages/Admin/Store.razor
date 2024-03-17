@@ -2,6 +2,7 @@
 @layout MainLayout
 @using MenuFlix.Web.Shared
 @using MenuFlix.Web.Shared.Models
+@using Newtonsoft.Json
 @inject HttpClient Http
 @attribute [Authorize(Roles = "Administrator")]
 
@@ -108,13 +109,14 @@
     private UserInfo _userinfo = new UserInfo();
     private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
     {
-        new BreadcrumbItem("Adminstrator", href: "#", icon: Icons.Material.Filled.AccountCircle),
+        new BreadcrumbItem("Administrator", href: "#", icon: Icons.Material.Filled.AccountCircle),
         new BreadcrumbItem("Store Management", href: "#", icon: Icons.Material.Filled.Storefront)        
     };
     protected override async Task OnInitializedAsync()
     {
         await GetApplications();
         await GetApprovedApplications();
+        
         _loading = false;
         await base.OnInitializedAsync();
 
@@ -156,9 +158,8 @@
     private async Task MergeUserInfo(string uid)
     {
         try
-        {
-            
-            var response = await Http.PostAsJsonAsync<string>("values", uid);
+        {            
+            var response = await Http.PostAsJsonAsync<string>("values/merge", uid);
 
             response.EnsureSuccessStatusCode();
 
@@ -167,7 +168,55 @@
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error updating owner: {ex.Message}");
+            Console.WriteLine($"Error inserting User Id: {ex.Message}");
         }
     }
+
+    private async Task UserIdExist()
+    {
+        try
+        {
+            // UserID to check
+            string userId = "google-oauth2|110139452400901793690";
+
+            // Send HTTP POST request to the API endpoint
+            var response = await Http.PostAsJsonAsync("values/checkexist", userId);
+
+            // Ensure the request was successful
+            response.EnsureSuccessStatusCode();
+
+            // Read the response content
+            var result = await response.Content.ReadAsStringAsync();
+            dynamic resultObject = JsonConvert.DeserializeObject(result);
+            int count = resultObject[0].count;
+            Console.WriteLine($"Returned: {count}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in UserIdExist: {ex.Message}");
+        }
+    }
+
+
+    // private async Task UserIdExist()
+    // {
+    //     try
+    //     {
+            
+    //         string userId = "google-oauth2|110139452400901793690";
+
+            
+    //         var response = await Http.GetAsync($"values?userId={userId}");
+
+            
+    //         response.EnsureSuccessStatusCode();
+            
+    //         var result = await response.Content.ReadAsStringAsync();
+    //         Console.WriteLine(result);
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Console.WriteLine($"Error in UserIdExist: {ex.Message}");
+    //     }
+    // }
 }

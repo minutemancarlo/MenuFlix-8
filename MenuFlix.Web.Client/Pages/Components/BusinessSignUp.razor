@@ -1,0 +1,170 @@
+﻿@using MenuFlix.Web.Shared.Models
+@using System.Security.Claims
+@inject ISessionStorageService sessionStorage
+@using Newtonsoft.Json
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+<MudDialog>
+    <DialogContent>
+        <MudItem xs="6" Class="float-start">
+            <MudBreadcrumbs Items="_items" Class="pointer-events-none"></MudBreadcrumbs>
+        </MudItem>
+        <MudGrid>
+            <MudItem xs="12">
+                <MudStack Row>
+                    <MudItem xs="6" Class="align-items-center justify-content-center d-flex flex-grow-1">
+                        <MudImage Src="Images/icons/user.png" Width="80" Height="80" ObjectFit="ObjectFit.Fill"></MudImage>
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudForm @ref="_form" Model="store">
+                        <MudTextField Variant="Variant.Outlined" Required Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Person" @bind-Value="store.StoreName"
+                                      Class="py-1"
+                                      Margin="Margin.Dense"
+                                      Label="Business Name"
+                                      ShrinkLabel />
+                        <MudTextField Variant="Variant.Outlined" Required Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Phone" @bind-Value="store.StoreContact"
+                                      Class="py-1"
+                                      Margin="Margin.Dense"
+                                      Label="Contact"
+                                      ShrinkLabel />
+                        <MudTextField Variant="Variant.Outlined" Required Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Email" @bind-Value="store.StoreEmail"
+                                      Class="py-1"
+                                      Margin="Margin.Dense"
+                                      Label="Email"
+                                      ShrinkLabel />
+                        <MudTextField Variant="Variant.Outlined" Required Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.EmojiTransportation" @bind-Value="store.StoreAddress"
+                                      Class="py-1"
+                                      Margin="Margin.Dense"
+                                      Label="Address"
+                                      ShrinkLabel />
+                        <MudTextField Variant="Variant.Outlined"  @bind-Value="adline2"
+                                      Class="py-1"
+                                      Margin="Margin.Dense"
+                                      Label="Street Address Line 2"
+                                      ShrinkLabel />
+                                      <MudStack Row>
+                            <MudTextField Variant="Variant.Outlined" Required @bind-Value="city"
+                                          Class="py-1"
+                                          Margin="Margin.Dense"
+                                          Label="City"
+                                          ShrinkLabel />
+                            <MudTextField Variant="Variant.Outlined" Required @bind-Value="province"
+                                          Class="py-1"
+                                          Margin="Margin.Dense"
+                                          Label="State/Province"
+                                          ShrinkLabel />
+                                      </MudStack>
+                       
+                        <MudTextField Variant="Variant.Outlined" Required @bind-Value="zip"
+                                      Class="py-1"
+                                      Margin="Margin.Dense"
+                                      Label="Postal/Zip Code"
+                                      ShrinkLabel />                                             
+                        </MudForm>
+                    </MudItem>
+                </MudStack>
+            </MudItem>
+            
+
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Variant="Variant.Outlined">Cancel</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Outlined" OnClick="Submit">Submit</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+
+
+
+
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    IList<IBrowserFile> files = new List<IBrowserFile>();
+    private List<Claim> UserClaims { get; set; } = new List<Claim>();
+    Store store = new Store();
+    MudForm _form;
+    bool success;
+
+    private string city;
+    private string zip;
+    private string adline2;
+    private string province;
+
+    private async Task Submit()
+    {
+        await _form.Validate();
+        if(_form.IsValid){
+
+            store.StoreAddress = $"{store.StoreAddress.ToLower()} {adline2.ToLower()}, {city.ToLower()}, {province.ToLower()}, {zip.ToLower()}";
+            await GetClaims();
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+
+    } 
+    void Cancel() => MudDialog.Cancel();
+
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Signup my Business", href: "#", icon: Icons.Material.Filled.AddBusiness)
+    };
+
+    private async Task GetClaims()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;        
+
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            UserClaims = user.Claims.ToList();
+
+            foreach (var item in UserClaims)
+            {
+                var a = item.Type;
+                var b = item.Value;
+
+            }
+        }
+    }
+
+    private async Task HandleFileChange(InputFileChangeEventArgs args)
+    {
+        var format = "image/jpg";
+        foreach(var image in args.GetMultipleFiles(int.MaxValue))
+        {
+            var resizedImage = await image.RequestImageFileAsync(format, 200, 200);
+            var buffer = new byte[resizedImage.Size];
+            await resizedImage.OpenReadStream().ReadAsync(buffer);
+            var imageData = $"data: {format}; base64,{Convert.ToBase64String(buffer)}";
+        }
+    }
+
+
+    private async Task RegisterBusiness()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync<Store>("values/merge", store);
+
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(result);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error inserting User Id: {ex.Message}");
+        }
+    }
+
+    private void UploadFiles(IBrowserFile file)
+    {
+        files.Add(file);
+        store.StoreLogo = file.Name;
+        //TODO upload the files to the server
+    }
+
+}

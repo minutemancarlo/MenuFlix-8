@@ -3,14 +3,15 @@
 @using MudBlazor
 @using MenuFlix.Web.Client.Pages.Components
 @using MudBlazor.Extensions
+
 @inject ISessionStorageService sessionStorage
-
-
+@inject NavigationManager nav
+@inject IDialogService DialogService
 
 <PageTitle>Index</PageTitle>
 
 <MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
-    @if (false)
+    @if (true)
     {
         <MudItem xs="6">
             <MudPopup @ref="_popup" Open="@_open" Style="background-color: #c0392b " Text="Register your business now" Icon="@Icons.Material.Filled.Info" PopupPosition="MudExtensions.Enums.PopupPosition.Bottom" EnableAnimation>
@@ -21,7 +22,7 @@
                                 <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
                                     <MudIcon Icon="@Icons.Material.Filled.Info" Style="color: white;" />
                                     <MudText Typo="Typo.h6" Style="color: white;">Revolutionize your business and join us!</MudText>
-                                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="@(() => _open = false)">Sign Up My Business</MudButton>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="BusinessRegister">Sign Up My Business</MudButton>
                                     <MudIconButton Icon="@Icons.Material.Filled.Close" Style="color: white;" OnClick="@(() => _open = false)" />
                                 </MudStack>
                             </MudItem>
@@ -33,104 +34,31 @@
     }
     
     <MudGrid>        
-        <MudItem xs="12">
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-            <style type="text/css">
-
-                .bounceIn {
-                    opacity: 0;
-                    animation-delay: 0.5s;
-                    animation-duration: 0.5s;
-                    animation-name: bounceIn;
-                    animation-fill-mode: forwards;
-                }
-
-                .bounceOut {
-                    animation-duration: 0.5s;
-                    animation-name: bounceOut;
-                    animation-fill-mode: forwards;
-                }
-
-                .backInDown {
-                    opacity: 0;
-                    animation-delay: 0.5s;
-                    animation-duration: 0.5s;
-                    animation-name: backInDown;
-                    animation-fill-mode: forwards;
-                }
-
-                .backOutDown {
-                    animation-duration: 0.5s;
-                    animation-name: backOutDown;
-                    animation-fill-mode: forwards;
-                }
-
-                .rotateIn {
-                    opacity: 0;
-                    animation-delay: 0.5s;
-                    animation-duration: 0.5s;
-                    animation-name: rotateIn;
-                    animation-fill-mode: forwards;
-                }
-
-                .rotateOut {
-                    animation-duration: 0.5s;
-                    animation-name: rotateOut;
-                    animation-fill-mode: forwards;
-                }
-            </style>
-
-            <MudCarousel Class="mud-width-full" Style="height:500px;" TData="object" AutoCycle="false">
-                <MudCarouselItem Color="@Color.Primary" Transition="Transition.Slide">
-                    <div style="position: relative; cursor: pointer" >
-
-                        @* the image *@
-                        <MudImage Src="Images/carousel/1.jpg" Alt="sample" />
-
-                        @* A transparent background for the text *@
-                        <MudPaper Elevation="0"
-                                  Class="rounded-0"
-                                  Style="position: absolute; bottom: 0; left: 0; padding: 25px; width: 100vw; opacity: 0.6">
-
-                            @* Hack: the text is needed to give the transparent part the proper height, but will also display the text in 0.6 transparency *@
-                            <MudText Typo="Typo.h4">Sample</MudText>
-                            <MudText Typo="Typo.h6">Sampol</MudText>
-                        </MudPaper>
-
-                        @* The text (in black) *@
-                        <span style="position: absolute; bottom: 0; left: 0; padding: 25px; width: 100vw; color: black">
-                            <MudText Typo="Typo.h4">Sample</MudText>
-                            <MudText Typo="Typo.h6">Sampol</MudText>
-                        </span>
-
-                    </div>
-                    @* <div class="d-flex" style="height:100%">
-                        <MudImage ObjectFit="ObjectFit.Cover" Src="Images/carousel/1.jpg" Alt="carousel 1" Class="rounded-lg">
-                            <MudText Typo="Typo.h1">MenuFlix Food Delivery</MudText>
-                        </MudImage>
-                    </div> *@
-                </MudCarouselItem>
-                <MudCarouselItem Color="@Color.Secondary" Transition="Transition.Fade">
-                    @* <div class="d-flex" style="height:100%"> *@
-                        <MudImage ObjectFit="ObjectFit.ScaleDown" Src="Images/carousel/2.jpg" Alt="carousel 2" Class="rounded-lg" />
-                    @* </div> *@
-                </MudCarouselItem>
-                <MudCarouselItem Color="@Color.Tertiary" Transition="Transition.Custom" CustomTransitionEnter="bounceIn" CustomTransitionExit="bounceOut">
-                    @* <div class="d-flex" style="height:100%"> *@
-                        <MudImage ObjectFit="ObjectFit.Fill" Src="Images/carousel/3.jpg" Alt="carousel 3" Class="rounded-lg" />
-                    @* </div> *@
-                </MudCarouselItem>
-                <MudCarouselItem Transition="Transition.Custom" CustomTransitionEnter="backInDown" CustomTransitionExit="backOutDown">
-                    @* <div class="d-flex" style="background-color:lightgray; height:100%"> *@
-                        <MudImage ObjectFit="ObjectFit.Contain" Src="Images/carousel/4.jpg" Alt="carousel 1" Class="rounded-lg" />
-                    @* </div> *@
-                </MudCarouselItem>
-               @*  <MudCarouselItem Transition="Transition.Custom" CustomTransitionEnter="rotateIn" CustomTransitionExit="rotateOut">
-                    <div class="d-flex" style="background-color:lightgray; height:100%">
-                        <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Color="@Color.Secondary" Size="@Size.Large" />
-                    </div>
-                </MudCarouselItem> *@
-            </MudCarousel>
+        <MudItem xs="12">            
+            <MudPaper Class="mud-width-full" Style="height:500px;">
+            @* <MudImage Src="Images/carousel/1-min.jpg" Height="500" ObjectFit="ObjectFit.Cover" Class="card-img-top"> *@
+                @* </MudImage> *@
+                <MudExCardList HoverMode="MudExCardHoverMode.Zoom" TData="MudCard" >
+                    <MudCard>
+                        <MudCardHeader Style="z-index: 5">
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.h6">Sample Headline</MudText>
+                            </CardHeaderContent>
+                            <CardHeaderActions>
+                                <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Error" />
+                            </CardHeaderActions>
+                        </MudCardHeader>
+                        <MudCardContent Style="z-index: 5">
+                            <MudText>Super sample Content text.</MudText>
+                            <MudText Typo="Typo.body2">Subline descriptin for sample card.</MudText>
+                        </MudCardContent>
+                        <MudCardActions Style="z-index: 5">
+                            <MudButton Variant="Variant.Filled" Color="Color.Error">Read More</MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudExCardList>
+            </MudPaper>
+                      
         </MudItem>
     </MudGrid>
 
@@ -154,8 +82,62 @@
                         <MudButton Variant="Variant.Filled" Color="Color.Error">Read More</MudButton>
                     </MudCardActions>
                 </MudCard>
+            </MudExCardList>                       
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudExCardList HoverMode="MudExCardHoverMode.Zoom" TData="MudCard">
+                <MudCard>
+                    <MudCardHeader Style="z-index: 5">
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6">Sample Headline</MudText>
+                        </CardHeaderContent>
+                        <CardHeaderActions>
+                            <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Error" />
+                        </CardHeaderActions>
+                    </MudCardHeader>
+                    <MudCardContent Style="z-index: 5">
+                        <MudText>Super sample Content text.</MudText>
+                        <MudText Typo="Typo.body2">Subline descriptin for sample card.</MudText>
+                    </MudCardContent>
+                    <MudCardActions Style="z-index: 5">
+                        <MudButton Variant="Variant.Filled" Color="Color.Error">Read More</MudButton>
+                    </MudCardActions>
+                </MudCard>
             </MudExCardList>
-            @* <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;">                                
+        </MudItem>
+        <MudItem xs="12" sm="6" md="4">
+            <MudExCardList HoverMode="MudExCardHoverMode.Zoom" TData="MudCard">
+                <MudCard Style="width: 100%">
+                    <MudCardHeader Style="z-index: 5">
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6">Sample Headline</MudText>
+                        </CardHeaderContent>
+                        <CardHeaderActions>
+                            <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Error" />
+                        </CardHeaderActions>
+                    </MudCardHeader>
+                    <MudCardContent Style="z-index: 5">
+                        <MudText>Super sample Content text.</MudText>
+                        <MudText Typo="Typo.body2">Subline descriptin for sample card.</MudText>
+                    </MudCardContent>
+                    <MudCardActions Style="z-index: 5">
+                        <MudButton Variant="Variant.Filled" Color="Color.Error">Read More</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudExCardList>
+        </MudItem>
+
+        
+       
+       
+       
+    </MudGrid>
+
+    <MudScrollToTop>
+        <MudFab Color="Color.Error" StartIcon="@Icons.Material.Filled.ArrowCircleUp" />
+    </MudScrollToTop>
+</MudContainer>
+@* <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;">
                 <MudStack Row>
                 @foreach (var item in this.items)
                 {
@@ -169,75 +151,6 @@
                 }
                 </MudStack>
             </MudPaper> *@
-            
-        </MudItem>
-        <MudItem xs="12" sm="6" md="4">
-            <MudCard>
-                <MudCardHeader Style="z-index: 5">
-                    <CardHeaderContent>
-                        <MudText Typo="Typo.h6">Sample Headline</MudText>
-                    </CardHeaderContent>
-                    <CardHeaderActions>
-                        <MudIconButton Icon="@Icons.Material.Filled.Camera" Color="Color.Default" />
-                    </CardHeaderActions>
-                </MudCardHeader>
-                <MudCardContent Style="z-index: 5">
-                    <MudText>Super sample Content text.</MudText>
-                    <MudText Typo="Typo.body2">Subline descriptin for sample card.</MudText>
-                </MudCardContent>
-                <MudCardActions Style="z-index: 5">
-                    <MudButton Variant="Variant.Text" Color="Color.Primary">Read More</MudButton>
-                </MudCardActions>
-            </MudCard>
-        </MudItem>
-        <MudItem xs="12" sm="12" md="4">
-            <MudCard>
-                <MudCardHeader Style="z-index: 5">
-                    <CardHeaderContent>
-                        <MudText Typo="Typo.h6">Sample Headline</MudText>
-                    </CardHeaderContent>
-                    <CardHeaderActions>
-                        <MudIconButton Icon="@Icons.Material.Filled.Camera" Color="Color.Default" />
-                    </CardHeaderActions>
-                </MudCardHeader>
-                <MudCardContent Style="z-index: 5">
-                    <MudText>Super sample Content text.</MudText>
-                    <MudText Typo="Typo.body2">Subline descriptin for sample card.</MudText>
-                </MudCardContent>
-                <MudCardActions Style="z-index: 5">
-                    <MudButton Variant="Variant.Text" Color="Color.Primary">Read More</MudButton>
-                </MudCardActions>
-            </MudCard>
-        </MudItem>
-        <MudItem xs="12" sm="6">
-            <MudGrid>
-                <MudItem xs="12">
-                    <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
-                </MudItem>
-                <MudItem xs="12">
-                    <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
-                </MudItem>
-            </MudGrid>
-        </MudItem>
-        <MudItem xs="12" sm="6">
-            <MudPaper Elevation="2" Class="pa-4" Style="height: 100%"></MudPaper>
-        </MudItem>
-        <MudItem xs="12" sm="6" md="4">
-            <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
-        </MudItem>
-        <MudItem xs="12" sm="6" md="4">
-            <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
-        </MudItem>
-        <MudItem xs="12" sm="12" md="4">
-            <MudPaper Elevation="2" Class="pa-4" Style="height: 200px;"></MudPaper>
-        </MudItem>
-    </MudGrid>
-
-    <MudScrollToTop>
-        <MudFab Color="Color.Error" StartIcon="@Icons.Material.Filled.ArrowCircleUp" />
-    </MudScrollToTop>
-</MudContainer>
-
 
 
 @code {
@@ -265,7 +178,18 @@
     {
         string _sid = await sessionStorage.GetItemAsync<string>("_sid");
         firstLogin = string.IsNullOrEmpty(_sid) ? true : false;
+    }   
+    private void BusinessRegister()
+    {
+        var options = new DialogOptions
+            {
+                CloseButton = true,
+                Position = DialogPosition.Center,                
+                FullWidth = true,
+                MaxWidth = MaxWidth.Medium,                
+            };
+
+        
+        var dialog = DialogService.Show<BusinessSignUp>("", options);                
     }
-    
-    
 }
